@@ -147,7 +147,7 @@ wchar_t* GetGameSubtitle(void *arg0 UNUSED, SfoInfo *sfo)
 
 wchar_t *GetCategoryTitle(int number)
 {
-    char *name;
+    const char *name;
 
 #ifdef BENCHMARK
     if(!display_flag) {
@@ -163,6 +163,25 @@ wchar_t *GetCategoryTitle(int number)
     for (int i = patches.index[patch_index]; p; i++) {
         if (i == number) {
             name = &p->name;
+
+            // Janky hack to use Japanese names (as naming the folders in Japanese is breaking loading for me)
+            switch(name[2]) {
+                case 'G':
+                    name = "__ゲーム";
+                    break;
+                case 'H':
+                    name = "__自作ソフト";
+                    break;
+                case 'D':
+                    name = "__体験版";
+                    break;
+                case 'E':
+                    name = "__エミュレータ";
+                    break;
+                default:
+                    break;
+            }
+
             kprintf("Found category: %s\n", name);
             if(sce_paf_private_strncmp(&p->name, "CAT_", 4) == 0) {
                 name += 4;
